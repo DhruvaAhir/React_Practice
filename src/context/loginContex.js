@@ -4,7 +4,12 @@ const LoginContext = createContext();
 
 const LoginProvider = ({ children }) => {
   //   const [loggedIn, setLoggedIn] = useState({ id: 1, email: "null" });
-  const [loggedIn, setLoggedIn] = useState({   loggedIn: false,   id: null,   email: null, });
+  const [loggedIn, setLoggedIn] = useState({
+    loggedIn: false,
+    id: null,
+    email: null,
+    accessToken: "",
+  });
 
   var payload = { loggedIn, setLoggedIn };
 

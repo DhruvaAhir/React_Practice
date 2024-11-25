@@ -3,26 +3,35 @@ import { useNavigate } from 'react-router-dom'
 import { LoginContext } from '../context/loginContex'
 import { UsersContext } from '../context/usersContext'
 import { Box, Button, Typography, } from '@mui/material'
-import axios from 'axios'
 import PostCard from '../components/postCard'
+import { LoaderContext } from '../context/loaderContext'
+import { getPosts } from '../api/getPosts'
+import { getUserData } from '../api/getUserData'
+
 
 const Home = () => {
     const { loggedIn } = useContext(LoginContext)
+    const { setShowLoader } = useContext(LoaderContext)
     const { users } = useContext(UsersContext)
     const [user] = useState(users.find(val => val.id === loggedIn.id))
     const [posts, setPosts] = useState([])
     const navigate = useNavigate()
-    console.log(posts)
-    useEffect(() => {
-        console.log("API Calling")
-        if (posts.length === 0) {
-            axios({
-                method: 'get',
-                url: 'https://jsonplaceholder.typicode.com/posts/'
-            }).then((response) => { setPosts(response.data.filter(val => val.userId === loggedIn.id)) })
-        }
 
-    }, [posts.length, loggedIn.id])
+    useEffect(() => {
+        setShowLoader(true)
+        
+        getUserData(loggedIn.accessToken, (res) => {
+            console.log(res)
+        }, (err) => {
+            console.log("User data Error", err)
+        })
+        getPosts(loggedIn.id, (res) => {
+            setPosts(res);
+            setShowLoader(false);
+        }, (err) => {
+            console.log("Post Error", err)
+        })
+    }, [loggedIn.accessToken, loggedIn.id, setShowLoader])
 
 
     return (
@@ -44,7 +53,7 @@ const Home = () => {
                         },
                     }}
                 >
-                    {
+                    {posts &&
                         posts.map((post, index) => {
 
                             return (

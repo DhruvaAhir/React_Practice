@@ -6,27 +6,33 @@ import Login from "./pages/login";
 import { LoginContext } from "./context/loginContex";
 import Navbar from "./components/navbar";
 import AddPost from "./pages/addPost";
-import { Container } from "@mui/material";
+import { Backdrop, CircularProgress, Container } from "@mui/material";
 import Post from "./pages/post";
+import { LoaderContext } from "./context/loaderContext";
 
 const AppRoutes = memo(() => {
+  const { showLoader } = useContext(LoaderContext);
   const { loggedIn } = useContext(LoginContext);
-  console.log(loggedIn);
   return (
     <>
       {loggedIn.loggedIn ? (
         <>
-          <Navbar />
-          <div className="div" style={{ backgroundColor: "#E0E0E0" }}>
-            <Container sx={{ backgroundColor: "#FAFAFA", minHeight: "100vh" }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/addpost" element={<AddPost />} />
-                <Route path="/*" element={<Navigate to="/" />} />
-                <Route path="post/:id" element={<Post />} />
-              </Routes>
-            </Container>
-          </div>
+          <>
+            <Navbar />
+
+            <div className="div" style={{ backgroundColor: "#E0E0E0" }}>
+              <Container
+                sx={{ backgroundColor: "#FAFAFA", minHeight: "100vh" }}
+              >
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/addpost" element={<AddPost />} />
+                  <Route path="/*" element={<Navigate to="/" />} />
+                  <Route path="post/:id" element={<Post />} />
+                </Routes>
+              </Container>
+            </div>
+          </>
         </>
       ) : (
         <>
@@ -37,6 +43,16 @@ const AppRoutes = memo(() => {
           </Routes>
         </>
       )}
+
+      <Backdrop
+        sx={(theme) => ({
+          color: "#fff",
+          zIndex: theme.zIndex.drawer + 1,
+        })}
+        open={showLoader}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 });

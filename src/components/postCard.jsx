@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 const PostCard = ({ post }) => {
     const navigate = useNavigate()
     return (
-        <Card onClick={() => { navigate(`post/${post.id}`); console.log(post.id) }} sx={{ maxWidth: 560, height: 130 }} >
+        <Card onClick={() => { navigate(`post/${post.id}`)}} sx={{ maxWidth: 560, height: 130 }} >
             <CardContent>
                 <Tooltip TransitionComponent={Fade}
                     TransitionProps={{ timeout: 1000 }} title={post.title} >

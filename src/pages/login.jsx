@@ -4,11 +4,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Box, Button, Container, IconButton, InputAdornment, TextField } from '@mui/material'
 import { UsersContext } from '../context/usersContext'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import axios from 'axios'
+import { LoaderContext } from '../context/loaderContext'
+import { postLogin } from '../api/postlogin'
 
 const Login = () => {
 
     const { users } = useContext(UsersContext)
     const { loggedIn, setLoggedIn } = useContext(LoginContext)
+    const { showLoader, setShowLoader } = useContext(LoaderContext)
     const [loginUser, setLoginUser] = useState({ email: "", password: "" })
     const [errors, setErrors] = useState({ email: false, emailText: "", password: false, passText: "" })
     const [showPassword, setShowPassword] = useState(false);
@@ -31,7 +35,21 @@ const Login = () => {
 
             if (emailIndex) {
                 if (loginUser.password === emailIndex.password) {
-                    setLoggedIn({ loggedIn: true, id: emailIndex.id, email: emailIndex.email })
+
+
+                    setShowLoader(true)
+                    postLogin({
+                        username: 'emilys',
+                        password: 'emilyspass',
+                        expiresInMins: 30,
+                    }, (res) => {
+                        console.log(res)
+                        setLoggedIn({ loggedIn: true, id: emailIndex.id, email: emailIndex.email, accessToken: res.data.accessToken })
+                        setShowLoader(false)
+                    }, (err) => {
+                        console.log("err", err)
+
+                    })
                     navigate('/')
                 } else {
                     x = ({ password: true, email: false, emailText: "", passText: "Inncorrect" })
@@ -41,6 +59,8 @@ const Login = () => {
             }
         }
         setErrors(x)
+
+
 
 
 
