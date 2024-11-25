@@ -2,16 +2,20 @@ import { Box, Button, TextField, Typography } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import { LoginContext } from '../context/loginContex'
 import axios from 'axios'
+import { LoaderContext } from '../context/loaderContext'
+import { postPost } from '../api/postPost'
+import { useNavigate } from 'react-router-dom'
 
 const AddPost = () => {
     const { loggedIn } = useContext(LoginContext)
+    const { setShowLoader } = useContext(LoaderContext)
 
+    const navigate = useNavigate()
     const [post, setPost] = useState({
         title: "",
         body: ""
     })
     const [errors, setErrors] = useState({ title: false, titleHelpText: '' })
-
 
     useEffect(() => {
         const validateData = () => {
@@ -29,12 +33,16 @@ const AddPost = () => {
         if (!errors.title) {
 
             const payload = { ...post, userId: loggedIn.id }
+            setShowLoader(true)
             console.log("payload", payload)
-            axios({ method: 'post', url: 'https://jsonplaceholder.typicode.com/posts', data: payload })
-                .then((res) => {
-                    console.log('response:', res);
-                    console.log('response data:', res.data);
-                }).catch((error) => { console.log(error) })
+            postPost(payload, (res) => {
+                console.log('response data:', res.data);
+                setShowLoader(false)
+                alert("post added ")
+                navigate('/')
+            }, (err) => {
+                console.log(err)
+            })
 
         } else {
             alert('Please fill in all fields')
